@@ -9,12 +9,13 @@
 
 Summary:	Kernel-based Virtual Machine for Linux
 Name:		kvm
-Version:	10
+Version:	12
 Release:	%{_rel}
 License:	GPL
 Group:		Applications/System
 Source0:	http://dl.sourceforge.net/kvm/%{name}-%{version}.tar.gz
-# Source0-md5:	41acb4a19818e70bf5833a2b1fa987a8
+# Source0-md5:	c336921942daa096063bbb471ed6eecd
+Patch0:         %{name}-headers.patch
 URL:		http://kvm.sourceforge.net/
 BuildRequires:	bash
 %if %{with kernel} && %{with dist_kernel}
@@ -73,6 +74,7 @@ kvm - moduł jądra SMP.
 
 %prep
 %setup -q
+%patch0 -p1
 
 %build
 # not ac stuff
@@ -82,8 +84,8 @@ kvm - moduł jądra SMP.
 	--qemu-cc="%{__cc}"
 
 %if %{with userspace}
-%{__make} -C user
-%{__make} -C qemu
+%{__make} -C user KERNELDIR=%{_kernelsrcdir}
+%{__make} -C qemu KERNELDIR=%{_kernelsrcdir}
 %endif
 
 %if %{with kernel}
@@ -122,7 +124,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %if %{with userspace}
 %{__make} -C user install \
-	DESTDIR=$RPM_BUILD_ROOT
+	DESTDIR=$RPM_BUILD_ROOT KERNELDIR=%{_kernelsrcdir}
 %{__make} -C qemu install \
 	DESTDIR=$RPM_BUILD_ROOT
 %endif
