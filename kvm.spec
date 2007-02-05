@@ -1,3 +1,5 @@
+#
+# Conditional build:
 %bcond_without  dist_kernel             # without distribution kernel
 %bcond_with     kernel                  # build for unpatched kernel (which doesn't provide kvm.ko already)
 %bcond_without  smp                     # don't build SMP module
@@ -8,6 +10,7 @@
 %define	_rel	0.1
 
 Summary:	Kernel-based Virtual Machine for Linux
+Summary(pl):	Oparta na j±drze maszyna wirtualna dla Linuksa
 Name:		kvm
 Version:	12
 Release:	%{_rel}
@@ -40,9 +43,19 @@ Using KVM, one can run multiple virtual machines running unmodified
 Linux or Windows images. Each virtual machine has private virtualized
 hardware: a network card, disk, graphics adapter, etc.
 
+%description -l pl
+KVM (Kernel-based Virtual Machine) to pe³ne rozwi±zanie wirtualizacji
+dla Linuksa na sprzêcie x86. Zawiera ³adowalny modu³ j±dra (kvm.ko)
+oraz komponent dzia³aj±cy w przestrzeni u¿ytkownika.
+
+Przy u¿yciu KVM mo¿na uruchomiæ wiele maszyn wirtualnych z
+dzia³aj±cymi niezmodyfikowanymi obrazami Linuksa i Windows. Kazda z
+maszyn wirtualnych ma prywatny wirtualizowany sprzêt: kartê sieciow±,
+dysk, kartê graficzn± itp.
+
 %package -n kernel%{_alt_kernel}-misc-kvm
-Summary:	kvm - kernel module
-Summary(pl):	kvm - moduÅ‚ jÄ…dra
+Summary:	kvm - Linux kernel module
+Summary(pl):	kvm - modu³ j±dra Linuksa
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 %{?with_dist_kernel:%requires_releq_kernel_up}
@@ -51,14 +64,14 @@ Requires(post,postun):	/sbin/depmod
 Requires:	module-init-tools >= 3.2.2-2
 
 %description -n kernel%{_alt_kernel}-misc-kvm
-kvm - kernel module.
+kvm - Linux kernel module.
 
 %description -n kernel%{_alt_kernel}-misc-kvm -l pl
-kvm - moduÅ‚ jÄ…dra.
+kvm - modu³ j±dra Linuka.
 
 %package -n kernel%{_alt_kernel}-smp-misc-kvm
-Summary:	kvm - SMP kernel module
-Summary(pl):	kvm - moduÅ‚ jÄ…dra SMP
+Summary:	kvm - Linux SMP kernel module
+Summary(pl):	kvm - modu³ j±dra Linuksa SMP
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 %{?with_dist_kernel:%requires_releq_kernel_smp}
@@ -67,10 +80,10 @@ Requires(post,postun):	/sbin/depmod
 Requires:	module-init-tools >= 3.2.2-2
 
 %description -n kernel%{_alt_kernel}-smp-misc-kvm
-kvm - SMP kernel module.
+kvm - Linux SMP kernel module.
 
 %description -n kernel%{_alt_kernel}-smp-misc-kvm -l pl
-kvm - moduÅ‚ jÄ…dra SMP.
+kvm - modu³ j±dra Linuksa SMP.
 
 %prep
 %setup -q
