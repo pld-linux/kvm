@@ -97,6 +97,7 @@ kvm - modu³ j±dra Linuksa SMP.
 	--qemu-cc="%{__cc}"
 
 %if %{with userspace}
+# FIXME: no references to %{_kernelsrcdir} outside kernel allowed
 %{__make} -C user KERNELDIR=%{_kernelsrcdir}
 %{__make} -C qemu KERNELDIR=%{_kernelsrcdir}
 %endif
