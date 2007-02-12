@@ -10,7 +10,7 @@
 %define	_rel	0.1
 
 Summary:	Kernel-based Virtual Machine for Linux
-Summary(pl.UTF-8):   Oparta na jądrze maszyna wirtualna dla Linuksa
+Summary(pl.UTF-8):	Oparta na jądrze maszyna wirtualna dla Linuksa
 Name:		kvm
 Version:	12
 Release:	%{_rel}
@@ -55,7 +55,7 @@ dysk, kartę graficzną itp.
 
 %package -n kernel%{_alt_kernel}-misc-kvm
 Summary:	kvm - Linux kernel module
-Summary(pl.UTF-8):   kvm - moduł jądra Linuksa
+Summary(pl.UTF-8):	kvm - moduł jądra Linuksa
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 %{?with_dist_kernel:%requires_releq_kernel_up}
@@ -71,7 +71,7 @@ kvm - moduł jądra Linuka.
 
 %package -n kernel%{_alt_kernel}-smp-misc-kvm
 Summary:	kvm - Linux SMP kernel module
-Summary(pl.UTF-8):   kvm - moduł jądra Linuksa SMP
+Summary(pl.UTF-8):	kvm - moduł jądra Linuksa SMP
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 %{?with_dist_kernel:%requires_releq_kernel_smp}
