@@ -10,7 +10,7 @@
 %define	_rel	0.1
 
 Summary:	Kernel-based Virtual Machine for Linux
-Summary(pl):	Oparta na j±drze maszyna wirtualna dla Linuksa
+Summary(pl.UTF-8):   Oparta na jÄ…drze maszyna wirtualna dla Linuksa
 Name:		kvm
 Version:	12
 Release:	%{_rel}
@@ -43,19 +43,19 @@ Using KVM, one can run multiple virtual machines running unmodified
 Linux or Windows images. Each virtual machine has private virtualized
 hardware: a network card, disk, graphics adapter, etc.
 
-%description -l pl
-KVM (Kernel-based Virtual Machine) to pe³ne rozwi±zanie wirtualizacji
-dla Linuksa na sprzêcie x86. Zawiera ³adowalny modu³ j±dra (kvm.ko)
-oraz komponent dzia³aj±cy w przestrzeni u¿ytkownika.
+%description -l pl.UTF-8
+KVM (Kernel-based Virtual Machine) to peÅ‚ne rozwiÄ…zanie wirtualizacji
+dla Linuksa na sprzÄ™cie x86. Zawiera Å‚adowalny moduÅ‚ jÄ…dra (kvm.ko)
+oraz komponent dziaÅ‚ajÄ…cy w przestrzeni uÅ¼ytkownika.
 
-Przy u¿yciu KVM mo¿na uruchomiæ wiele maszyn wirtualnych z
-dzia³aj±cymi niezmodyfikowanymi obrazami Linuksa i Windows. Kazda z
-maszyn wirtualnych ma prywatny wirtualizowany sprzêt: kartê sieciow±,
-dysk, kartê graficzn± itp.
+Przy uÅ¼yciu KVM moÅ¼na uruchomiÄ‡ wiele maszyn wirtualnych z
+dziaÅ‚ajÄ…cymi niezmodyfikowanymi obrazami Linuksa i Windows. Kazda z
+maszyn wirtualnych ma prywatny wirtualizowany sprzÄ™t: kartÄ™ sieciowÄ…,
+dysk, kartÄ™ graficznÄ… itp.
 
 %package -n kernel%{_alt_kernel}-misc-kvm
 Summary:	kvm - Linux kernel module
-Summary(pl):	kvm - modu³ j±dra Linuksa
+Summary(pl.UTF-8):   kvm - moduÅ‚ jÄ…dra Linuksa
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 %{?with_dist_kernel:%requires_releq_kernel_up}
@@ -66,12 +66,12 @@ Requires:	module-init-tools >= 3.2.2-2
 %description -n kernel%{_alt_kernel}-misc-kvm
 kvm - Linux kernel module.
 
-%description -n kernel%{_alt_kernel}-misc-kvm -l pl
-kvm - modu³ j±dra Linuka.
+%description -n kernel%{_alt_kernel}-misc-kvm -l pl.UTF-8
+kvm - moduÅ‚ jÄ…dra Linuka.
 
 %package -n kernel%{_alt_kernel}-smp-misc-kvm
 Summary:	kvm - Linux SMP kernel module
-Summary(pl):	kvm - modu³ j±dra Linuksa SMP
+Summary(pl.UTF-8):   kvm - moduÅ‚ jÄ…dra Linuksa SMP
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 %{?with_dist_kernel:%requires_releq_kernel_smp}
@@ -82,8 +82,8 @@ Requires:	module-init-tools >= 3.2.2-2
 %description -n kernel%{_alt_kernel}-smp-misc-kvm
 kvm - Linux SMP kernel module.
 
-%description -n kernel%{_alt_kernel}-smp-misc-kvm -l pl
-kvm - modu³ j±dra Linuksa SMP.
+%description -n kernel%{_alt_kernel}-smp-misc-kvm -l pl.UTF-8
+kvm - moduÅ‚ jÄ…dra Linuksa SMP.
 
 %prep
 %setup -q
