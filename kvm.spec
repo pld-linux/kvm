@@ -11,12 +11,12 @@
 Summary:	Kernel-based Virtual Machine for Linux
 Summary(pl.UTF-8):	Oparta na jądrze maszyna wirtualna dla Linuksa
 Name:		kvm
-Version:	27
+Version:	48
 Release:	%{_rel}
 License:	GPL
 Group:		Applications/System
 Source0:	http://dl.sourceforge.net/kvm/%{name}-%{version}.tar.gz
-# Source0-md5:	1ba05fc3eec2afced62f06c242bb8ddc
+# Source0-md5:	96ed3af676a45f8f0c1d04ac9edcb734
 URL:		http://kvm.sourceforge.net/
 BuildRequires:	bash
 %if %{with kernel}
@@ -26,7 +26,6 @@ BuildRequires:	rpmbuild(macros) >= 1.379
 %if %{with userspace}
 BuildRequires:	SDL-devel
 BuildRequires:	alsa-lib-devel
-BuildRequires:	gcc < 5:4.0
 BuildRequires:	libuuid-devel
 BuildRequires:	zlib-devel
 %endif
@@ -76,6 +75,7 @@ kvm - moduł jądra Linuka.
 	%{!?with_kernel:--with-patched-kernel} \
 	--prefix=%{_libdir}/kvm \
 	--kerneldir=$PWD/kernel \
+	--disable-gcc-check \
 	--qemu-cc="%{__cc}"
 
 %if %{with userspace}
