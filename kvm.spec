@@ -6,7 +6,7 @@
 
 %define	no_install_post_strip	1
 
-%define	_rel	0.1
+%define	_rel	0.2
 
 Summary:	Kernel-based Virtual Machine for Linux
 Summary(pl.UTF-8):	Oparta na jądrze maszyna wirtualna dla Linuksa
@@ -117,9 +117,8 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_libdir}/kvm/bin
 %attr(755,root,root) %{_libdir}/kvm/bin/*
 %{_libdir}/kvm/include
-%{_libdir}/kvm/lib
+%{_libdir}/kvm/%{_lib}
 %dir %{_libdir}/kvm/share
-%{_libdir}/kvm/share/man
 %{_libdir}/kvm/share/qemu
 %endif
 
