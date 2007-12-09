@@ -28,6 +28,7 @@ BuildRequires:	SDL-devel
 BuildRequires:	alsa-lib-devel
 BuildRequires:	libuuid-devel
 BuildRequires:	zlib-devel
+BuildRequires:	perl-tools-pod
 %endif
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
