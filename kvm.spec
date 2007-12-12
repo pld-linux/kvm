@@ -27,8 +27,8 @@ BuildRequires:	rpmbuild(macros) >= 1.379
 BuildRequires:	SDL-devel
 BuildRequires:	alsa-lib-devel
 BuildRequires:	libuuid-devel
-BuildRequires:	zlib-devel
 BuildRequires:	perl-tools-pod
+BuildRequires:	zlib-devel
 %endif
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
