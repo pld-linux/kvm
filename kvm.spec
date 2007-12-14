@@ -25,7 +25,6 @@ BuildRequires:	rpmbuild(macros) >= 1.379
 %endif
 %if %{with userspace}
 BuildRequires:	SDL-devel
-BuildRequires:	alsa-lib-devel
 BuildRequires:	libuuid-devel
 BuildRequires:	perl-tools-pod
 BuildRequires:	zlib-devel
@@ -79,6 +78,7 @@ kvm - moduł jądra Linuka.
 	--prefix=%{_libdir}/kvm \
 	--kerneldir=$PWD/kernel \
 	--disable-gcc-check \
+	--enable-alsa \
 	--qemu-cc="%{__cc}"
 
 %if %{with userspace}
