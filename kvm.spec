@@ -6,7 +6,7 @@
 
 %define	no_install_post_strip	1
 
-%define	_rel	0.2
+%define	_rel	0.3
 
 Summary:	Kernel-based Virtual Machine for Linux
 Summary(pl.UTF-8):	Oparta na jądrze maszyna wirtualna dla Linuksa
@@ -58,6 +58,9 @@ Group:		Base/Kernel
 %{?with_dist_kernel:%requires_releq_kernel}
 License:	Free to use, non-distributable
 Requires(post,postun):	/sbin/depmod
+Requires(postun):	/usr/sbin/groupdel
+Requires(pre):	/usr/bin/getgid
+Requires(pre):	/usr/sbin/groupadd
 Requires:	module-init-tools >= 3.2.2-2
 
 %description -n kernel%{_alt_kernel}-misc-kvm
@@ -105,17 +108,24 @@ mv -f $RPM_BUILD_ROOT%{_bindir}/qemu-system-x86_64 $RPM_BUILD_ROOT%{_bindir}/%{n
 %endif
 
 %if %{with kernel}
+install -D scripts/65-kvm.rules $RPM_BUILD_ROOT/etc/udev/rules.d/kvm.rules
 %install_kernel_modules -m kernel/{kvm-amd,kvm,kvm-intel} -d misc
 %endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%pre    -n kernel%{_alt_kernel}-misc-kvm
+%groupadd -g 222 kvm
+
 %post   -n kernel%{_alt_kernel}-misc-kvm
 %depmod %{_kernel_ver}
 
 %postun -n kernel%{_alt_kernel}-misc-kvm
 %depmod %{_kernel_ver}
+if [ "$1" = "0" ]; then
+    %groupremove kvm
+fi
 
 %if %{with userspace}
 %files
@@ -126,5 +136,6 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with kernel}
 %files -n kernel%{_alt_kernel}-misc-kvm
 %defattr(644,root,root,755)
+%config(noreplace) %verify(not md5 mtime size) /etc/udev/rules.d/kvm.rules
 /lib/modules/%{_kernel_ver}/misc/kvm*
 %endif
