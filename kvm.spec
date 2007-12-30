@@ -6,7 +6,7 @@
 
 %define	no_install_post_strip	1
 
-%define	_rel	0.1
+%define	_rel	0.2
 
 Summary:	Kernel-based Virtual Machine for Linux
 Summary(pl.UTF-8):	Oparta na jądrze maszyna wirtualna dla Linuksa
@@ -26,9 +26,8 @@ BuildRequires:	rpmbuild(macros) >= 1.379
 %if %{with userspace}
 BuildRequires:	SDL-devel
 BuildRequires:	alsa-lib-devel
-BuildRequires:	libuuid-devel
-BuildRequires:	perl-tools-pod
 BuildRequires:	zlib-devel
+Requires:	qemu
 %endif
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -76,17 +75,13 @@ kvm - moduł jądra Linuka.
 	%{!?with_kernel:--with-patched-kernel} \
 	--disable-gcc-check \
 	--kerneldir=%{_kernelsrcdir} \
-	--prefix=%{_libdir}/kvm \
+	--prefix=%{_prefix} \
 	--kerneldir=$PWD/kernel \
 	--disable-gcc-check \
 	--enable-alsa \
 	--qemu-cc="%{__cc}"
 
 %if %{with userspace}
-# build bios or use binary one?
-#%{__make} bios
-%{__make} libkvm
-%{__make} user
 %{__make} qemu
 %endif
 
@@ -98,11 +93,15 @@ kvm - moduł jądra Linuka.
 rm -rf $RPM_BUILD_ROOT
 
 %if %{with userspace}
-%{__make} -C libkvm install \
-	DESTDIR=$RPM_BUILD_ROOT
-# KERNELDIR=%{_kernelsrcdir}
 %{__make} -C qemu install \
 	DESTDIR=$RPM_BUILD_ROOT
+
+# removing files which are provided by required qemu package
+rm -rf $RPM_BUILD_ROOT%{_datadir}/qemu $RPM_BUILD_ROOT%{_mandir} $RPM_BUILD_ROOT%{_docdir}
+rm -f $RPM_BUILD_ROOT%{_bindir}/qemu-img
+
+# changing binary name to avoid conflict with qemu
+mv -f $RPM_BUILD_ROOT%{_bindir}/qemu-system-x86_64 $RPM_BUILD_ROOT%{_bindir}/%{name}
 %endif
 
 %if %{with kernel}
@@ -121,14 +120,7 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with userspace}
 %files
 %defattr(644,root,root,755)
-%dir %{_libdir}/kvm
-%dir %{_libdir}/kvm/bin
-%attr(755,root,root) %{_libdir}/kvm/bin/*
-%{_libdir}/kvm/include
-%{_libdir}/kvm/%{_lib}
-%dir %{_libdir}/kvm/share
-%{_libdir}/kvm/share/qemu
-%{_mandir}/man1/qemu*.1*
+%attr(755,root,root) %{_bindir}/%{name}
 %endif
 
 %if %{with kernel}
