@@ -1,3 +1,5 @@
+# TODO:
+# - doesn't build on ppc, fix this if possible
 #
 # Conditional build:
 %bcond_without  dist_kernel     	# allow non-distribution kernel
@@ -6,7 +8,7 @@
 
 %define	no_install_post_strip	1
 
-%define	_rel	0.4
+%define	_rel	1
 
 Summary:	Kernel-based Virtual Machine for Linux
 Summary(pl.UTF-8):	Oparta na jądrze maszyna wirtualna dla Linuksa
@@ -29,6 +31,7 @@ BuildRequires:	alsa-lib-devel
 BuildRequires:	zlib-devel
 Requires:	qemu
 %endif
+ExcludeArch:	ppc
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
