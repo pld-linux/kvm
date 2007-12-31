@@ -56,7 +56,7 @@ Summary(pl.UTF-8):	kvm - moduł jądra Linuksa
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 %{?with_dist_kernel:%requires_releq_kernel}
-License:	Free to use, non-distributable
+License:	GPL v2
 Requires(post,postun):	/sbin/depmod
 Requires(postun):	/usr/sbin/groupdel
 Requires(pre):	/usr/bin/getgid
