@@ -1,4 +1,5 @@
 # TODO:
+# - udev is optional, so separate udev stuff from kernel module
 # - doesn't build on ppc, fix this if possible
 #
 # Conditional build:
@@ -8,14 +9,14 @@
 
 %define	no_install_post_strip	1
 
-%define	_rel	1
+%define	rel	1
 
 Summary:	Kernel-based Virtual Machine for Linux
 Summary(pl.UTF-8):	Oparta na jądrze maszyna wirtualna dla Linuksa
 Name:		kvm
 Version:	58
-Release:	%{_rel}
-License:	GPL
+Release:	%{rel}
+License:	GPL v2
 Group:		Applications/System
 Source0:	http://dl.sourceforge.net/kvm/%{name}-%{version}.tar.gz
 # Source0-md5:	e217c48ad0d741ade09b1cbf672fb50b
@@ -31,7 +32,8 @@ BuildRequires:	alsa-lib-devel
 BuildRequires:	zlib-devel
 Requires:	qemu
 %endif
-ExcludeArch:	ppc
+# ppc broken?
+ExclusiveArch:	%{ix86} %{x8664} ia64
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -56,7 +58,7 @@ dysk, kartę graficzną itp.
 %package -n kernel%{_alt_kernel}-misc-kvm
 Summary:	kvm - Linux kernel module
 Summary(pl.UTF-8):	kvm - moduł jądra Linuksa
-Release:	%{_rel}@%{_kernel_ver_str}
+Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 %{?with_dist_kernel:%requires_releq_kernel}
 License:	GPL v2
@@ -70,7 +72,7 @@ Requires:	module-init-tools >= 3.2.2-2
 kvm - Linux kernel module.
 
 %description -n kernel%{_alt_kernel}-misc-kvm -l pl.UTF-8
-kvm - moduł jądra Linuka.
+kvm - moduł jądra Linuksa.
 
 %prep
 %setup -q
@@ -127,7 +129,7 @@ rm -rf $RPM_BUILD_ROOT
 %postun -n kernel%{_alt_kernel}-misc-kvm
 %depmod %{_kernel_ver}
 if [ "$1" = "0" ]; then
-    %groupremove kvm
+	%groupremove kvm
 fi
 
 %if %{with userspace}
