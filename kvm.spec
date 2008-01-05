@@ -14,12 +14,12 @@
 Summary:	Kernel-based Virtual Machine for Linux
 Summary(pl.UTF-8):	Oparta na jądrze maszyna wirtualna dla Linuksa
 Name:		kvm
-Version:	58
+Version:	59
 Release:	%{rel}
 License:	GPL v2
 Group:		Applications/System
 Source0:	http://dl.sourceforge.net/kvm/%{name}-%{version}.tar.gz
-# Source0-md5:	e217c48ad0d741ade09b1cbf672fb50b
+# Source0-md5:	59fc43ab950c003a94004e08806ee675
 URL:		http://kvm.sourceforge.net/
 BuildRequires:	bash
 %if %{with kernel}
