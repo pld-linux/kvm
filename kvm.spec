@@ -9,7 +9,7 @@
 
 %define	no_install_post_strip	1
 
-%define	rel	1
+%define	rel	2
 
 Summary:	Kernel-based Virtual Machine for Linux
 Summary(pl.UTF-8):	Oparta na jądrze maszyna wirtualna dla Linuksa
