@@ -118,7 +118,7 @@ install -D scripts/65-kvm.rules $RPM_BUILD_ROOT/etc/udev/rules.d/kvm.rules
 rm -rf $RPM_BUILD_ROOT
 
 %pre    -n kernel%{_alt_kernel}-misc-kvm
-%groupadd -g 222 kvm
+%groupadd -g 160 kvm
 
 %post   -n kernel%{_alt_kernel}-misc-kvm
 %depmod %{_kernel_ver}
