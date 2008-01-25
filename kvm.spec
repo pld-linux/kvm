@@ -7,16 +7,16 @@
 %bcond_without  kernel                  # build for unpatched kernel (which doesn't provide kvm.ko already)
 %bcond_without  userspace               # don't build userspace utilities
 
-%define		rel	3
+%define		rel	1
 Summary:	Kernel-based Virtual Machine for Linux
 Summary(pl.UTF-8):	Oparta na jądrze maszyna wirtualna dla Linuksa
 Name:		kvm
-Version:	59
+Version:	60
 Release:	%{rel}
 License:	GPL v2
 Group:		Applications/System
 Source0:	http://dl.sourceforge.net/kvm/%{name}-%{version}.tar.gz
-# Source0-md5:	59fc43ab950c003a94004e08806ee675
+# Source0-md5:	79d92d57ad3b6057a717b25bb20ee72c
 URL:		http://kvm.sourceforge.net/
 BuildRequires:	bash
 %if %{with kernel}
