@@ -107,6 +107,7 @@ rm -f $RPM_BUILD_ROOT%{_bindir}/qemu-img
 
 # changing binary name to avoid conflict with qemu
 mv -f $RPM_BUILD_ROOT%{_bindir}/qemu-system-x86_64 $RPM_BUILD_ROOT%{_bindir}/%{name}
+install kvm_stat $RPM_BUILD_ROOT%{_bindir}
 %endif
 
 %if %{with kernel}
@@ -132,7 +133,7 @@ fi
 %if %{with userspace}
 %files
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/%{name}
+%attr(755,root,root) %{_bindir}/%{name}*
 %endif
 
 %if %{with kernel}
