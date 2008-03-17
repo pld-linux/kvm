@@ -1,13 +1,14 @@
 # TODO:
 # - udev is optional, so separate udev stuff from kernel module
 # - doesn't build on ppc, fix this if possible
+# - doesn't build at all
 #
 # Conditional build:
 %bcond_without  dist_kernel     	# allow non-distribution kernel
 %bcond_without  kernel                  # build for unpatched kernel (which doesn't provide kvm.ko already)
 %bcond_without  userspace               # don't build userspace utilities
 
-%define		rel	3
+%define		rel	1
 Summary:	Kernel-based Virtual Machine for Linux
 Summary(pl.UTF-8):	Oparta na jądrze maszyna wirtualna dla Linuksa
 Name:		kvm
