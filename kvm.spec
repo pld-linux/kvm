@@ -7,15 +7,27 @@
 %bcond_without  kernel                  # build for unpatched kernel (which doesn't provide kvm.ko already)
 %bcond_without  userspace               # don't build userspace utilities
 
+%if %{without kernel}
+%undefine	with_dist_kernel
+%endif
+%if "%{_alt_kernel}" != "%{nil}"
+%undefine	with_userspace
+%endif
+%if %{without userspace}
+# nothing to be placed to debuginfo package
+%define		_enable_debug_packages	0
+%endif
+
 %define		rel	3
+%define		pname	kvm
 Summary:	Kernel-based Virtual Machine for Linux
 Summary(pl.UTF-8):	Oparta na jądrze maszyna wirtualna dla Linuksa
-Name:		kvm
+Name:		%{pname}%{_alt_kernel}
 Version:	60
 Release:	%{rel}
 License:	GPL v2
 Group:		Applications/System
-Source0:	http://dl.sourceforge.net/kvm/%{name}-%{version}.tar.gz
+Source0:	http://dl.sourceforge.net/kvm/%{pname}-%{version}.tar.gz
 # Source0-md5:	79d92d57ad3b6057a717b25bb20ee72c
 URL:		http://kvm.sourceforge.net/
 BuildRequires:	bash
@@ -52,13 +64,23 @@ działającymi niezmodyfikowanymi obrazami Linuksa i Windows. Kazda z
 maszyn wirtualnych ma prywatny wirtualizowany sprzęt: kartę sieciową,
 dysk, kartę graficzną itp.
 
+%package udev
+Summary:	kvm udev scripts
+Summary(pl.UTF-8):	Skrypty udev dla kvm
+Group:		Application/System
+
+%description udev
+kvm udev scripts.
+
+%description udev -l pl.UTF-8
+Skrypty udev dla kvm.
+
 %package -n kernel%{_alt_kernel}-misc-kvm
 Summary:	kvm - Linux kernel module
 Summary(pl.UTF-8):	kvm - moduł jądra Linuksa
 Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 %{?with_dist_kernel:%requires_releq_kernel}
-License:	GPL v2
 Requires(post,postun):	/sbin/depmod
 Requires(postun):	/usr/sbin/groupdel
 Requires(pre):	/usr/bin/getgid
@@ -72,7 +94,7 @@ kvm - Linux kernel module.
 kvm - moduł jądra Linuksa.
 
 %prep
-%setup -q
+%setup -q -n %{pname}-%{version}
 
 %build
 # not ac stuff
@@ -82,8 +104,12 @@ kvm - moduł jądra Linuksa.
 	--kerneldir=%{_kernelsrcdir} \
 	--prefix=%{_prefix} \
 	--kerneldir=$PWD/kernel \
-	--disable-gcc-check \
+%if %{with userspace}
 	--enable-alsa \
+%else
+	--disable-gfx-check \
+	--disable-sdl \
+%endif
 	--qemu-cc="%{__cc}"
 
 %if %{with userspace}
@@ -106,12 +132,13 @@ rm -rf $RPM_BUILD_ROOT%{_datadir}/qemu $RPM_BUILD_ROOT%{_mandir} $RPM_BUILD_ROOT
 rm -f $RPM_BUILD_ROOT%{_bindir}/qemu-img
 
 # changing binary name to avoid conflict with qemu
-mv -f $RPM_BUILD_ROOT%{_bindir}/qemu-system-x86_64 $RPM_BUILD_ROOT%{_bindir}/%{name}
+mv -f $RPM_BUILD_ROOT%{_bindir}/qemu-system-x86_64 $RPM_BUILD_ROOT%{_bindir}/%{pname}
 install kvm_stat $RPM_BUILD_ROOT%{_bindir}
+
+install -D scripts/65-kvm.rules $RPM_BUILD_ROOT/etc/udev/rules.d/kvm.rules
 %endif
 
 %if %{with kernel}
-install -D scripts/65-kvm.rules $RPM_BUILD_ROOT/etc/udev/rules.d/kvm.rules
 %install_kernel_modules -m kernel/{kvm-amd,kvm,kvm-intel} -d misc
 %endif
 
@@ -133,12 +160,15 @@ fi
 %if %{with userspace}
 %files
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/%{name}*
+%attr(755,root,root) %{_bindir}/kvm*
+
+%files udev
+%defattr(644,root,root,755)
+%config(noreplace) %verify(not md5 mtime size) /etc/udev/rules.d/kvm.rules
 %endif
 
 %if %{with kernel}
 %files -n kernel%{_alt_kernel}-misc-kvm
 %defattr(644,root,root,755)
-%config(noreplace) %verify(not md5 mtime size) /etc/udev/rules.d/kvm.rules
 /lib/modules/%{_kernel_ver}/misc/kvm*
 %endif
