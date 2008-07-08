@@ -1,5 +1,4 @@
 # TODO:
-# - udev is optional, so separate udev stuff from kernel module
 # - doesn't build on ppc, fix this if possible
 #
 # Conditional build:
@@ -39,11 +38,14 @@ BuildRequires:	rpmbuild(macros) >= 1.379
 BuildRequires:	SDL-devel
 BuildRequires:	alsa-lib-devel
 BuildRequires:	zlib-devel
-Requires:	qemu
+Conflicts:	qemu
 %endif
 # ppc broken?
 ExclusiveArch:	%{ix86} %{x8664} ia64
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+
+# some SPARC boot image in ELF format
+%define         _noautostrip    .*%{_datadir}/qemu/openbios-sparc32
 
 %description
 KVM (for Kernel-based Virtual Machine) is a full virtualization
@@ -128,8 +130,8 @@ rm -rf $RPM_BUILD_ROOT
 	DESTDIR=$RPM_BUILD_ROOT
 
 # removing files which are provided by required qemu package
-rm -rf $RPM_BUILD_ROOT%{_datadir}/qemu $RPM_BUILD_ROOT%{_mandir} $RPM_BUILD_ROOT%{_docdir}
-rm -f $RPM_BUILD_ROOT%{_bindir}/qemu-img
+#rm -rf $RPM_BUILD_ROOT%{_datadir}/qemu $RPM_BUILD_ROOT%{_mandir} $RPM_BUILD_ROOT%{_docdir}
+#rm -f $RPM_BUILD_ROOT%{_bindir}/qemu-img
 
 # changing binary name to avoid conflict with qemu
 mv -f $RPM_BUILD_ROOT%{_bindir}/qemu-system-x86_64 $RPM_BUILD_ROOT%{_bindir}/%{pname}
@@ -160,7 +162,10 @@ fi
 %if %{with userspace}
 %files
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/kvm*
+%attr(755,root,root) %{_bindir}/*
+%{_datadir}/qemu
+%{_mandir}/man1/qemu.1*
+%{_mandir}/man1/qemu-img.1*
 
 %files udev
 %defattr(644,root,root,755)
