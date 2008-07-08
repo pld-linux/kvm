@@ -19,17 +19,17 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel	1
+%define		rel	0.1
 %define		pname	kvm
 Summary:	Kernel-based Virtual Machine for Linux
 Summary(pl.UTF-8):	Oparta na jądrze maszyna wirtualna dla Linuksa
 Name:		%{pname}%{_alt_kernel}
-Version:	69
+Version:	70
 Release:	%{rel}
 License:	GPL v2
 Group:		Applications/System
 Source0:	http://dl.sourceforge.net/kvm/%{name}-%{version}.tar.gz
-# Source0-md5:	acc26d88b6aee5f59f557e8ce211bfc5
+# Source0-md5:	ddf8b4ff5b7aebf136dfe2880f8beafe
 URL:		http://kvm.sourceforge.net/
 BuildRequires:	bash
 %if %{with kernel}
@@ -102,6 +102,7 @@ kvm - moduł jądra Linuksa.
 ./configure \
 	%{!?with_kernel:--with-patched-kernel} \
 	--disable-gcc-check \
+	--disable-werror \
 	--kerneldir=%{_kernelsrcdir} \
 	--prefix=%{_prefix} \
 	--kerneldir=$PWD/kernel \
@@ -111,7 +112,7 @@ kvm - moduł jądra Linuksa.
 	--disable-gfx-check \
 	--disable-sdl \
 %endif
-	--qemu-cc="%{__cc}"
+#	--qemu-cc="%{__cc}"
 
 %if %{with userspace}
 %{__make} qemu
