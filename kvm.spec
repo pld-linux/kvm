@@ -1,5 +1,4 @@
 # TODO:
-# - udev is optional, so separate udev stuff from kernel module
 # - doesn't build on ppc, fix this if possible
 # - doesn't build at all
 #
@@ -24,12 +23,12 @@
 Summary:	Kernel-based Virtual Machine for Linux
 Summary(pl.UTF-8):	Oparta na jądrze maszyna wirtualna dla Linuksa
 Name:		%{pname}%{_alt_kernel}
-Version:	70
+Version:	71
 Release:	%{rel}
 License:	GPL v2
 Group:		Applications/System
 Source0:	http://dl.sourceforge.net/kvm/%{name}-%{version}.tar.gz
-# Source0-md5:	ddf8b4ff5b7aebf136dfe2880f8beafe
+# Source0-md5:	9c8e4551ca6b6f5a4662722bb163cf12
 URL:		http://kvm.sourceforge.net/
 BuildRequires:	bash
 %if %{with kernel}
@@ -101,18 +100,12 @@ kvm - moduł jądra Linuksa.
 # not ac stuff
 ./configure \
 	%{!?with_kernel:--with-patched-kernel} \
+	%{!?with_userspace:--disable-sdl} \
 	--disable-gcc-check \
 	--disable-werror \
 	--kerneldir=%{_kernelsrcdir} \
 	--prefix=%{_prefix} \
-	--kerneldir=$PWD/kernel \
-%if %{with userspace}
-	--enable-alsa \
-%else
-	--disable-gfx-check \
-	--disable-sdl \
-%endif
-#	--qemu-cc="%{__cc}"
+	--kerneldir=$PWD/kernel
 
 %if %{with userspace}
 %{__make} qemu
