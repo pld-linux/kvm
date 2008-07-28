@@ -1,32 +1,51 @@
 # TODO:
 # - doesn't build on ppc, fix this if possible
-# - fix building with ALSA (not OSS)
 #
+# Conditional build:
+%bcond_without  dist_kernel     	# allow non-distribution kernel
+%bcond_without  kernel                  # build for unpatched kernel (which doesn't provide kvm.ko already)
+%bcond_without  userspace               # don't build userspace utilities
+
+%if %{without kernel}
+%undefine	with_dist_kernel
+%endif
+%if "%{_alt_kernel}" != "%{nil}"
+%undefine	with_userspace
+%endif
+%if %{without userspace}
+# nothing to be placed to debuginfo package
 %define		_enable_debug_packages	0
-#
-%define		rel	0.1
+%endif
+
+%define		rel	4
 %define		pname	kvm
-Summary:	KVM userspace tools
-Summary(pl.UTF-8):	Narzędzia przestrzeni użytkownika dla KVM
+Summary:	Kernel-based Virtual Machine for Linux
+Summary(pl.UTF-8):	Oparta na jądrze maszyna wirtualna dla Linuksa
 Name:		%{pname}%{_alt_kernel}
-Version:	72
+Version:	60
 Release:	%{rel}
 License:	GPL v2
 Group:		Applications/System
 Source0:	http://dl.sourceforge.net/kvm/%{pname}-%{version}.tar.gz
-# Source0-md5:	e4f99d05dee168200695850165cd760e
+# Source0-md5:	79d92d57ad3b6057a717b25bb20ee72c
 URL:		http://kvm.sourceforge.net/
 BuildRequires:	bash
+%if %{with kernel}
+BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.20.2
+BuildRequires:	rpmbuild(macros) >= 1.379
+%endif
+%if %{with userspace}
 BuildRequires:	SDL-devel
 BuildRequires:	alsa-lib-devel
 BuildRequires:	zlib-devel
 Conflicts:	qemu
+%endif
 # ppc broken?
 ExclusiveArch:	%{ix86} %{x8664} ia64
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 # some SPARC boot image in ELF format
-%define         _noautostrip    .*%{_datadir}/qemu/openbios-sparc.*
+%define         _noautostrip    .*%{_datadir}/qemu/openbios-sparc32
 
 %description
 KVM (for Kernel-based Virtual Machine) is a full virtualization
@@ -58,23 +77,55 @@ kvm udev scripts.
 %description udev -l pl.UTF-8
 Skrypty udev dla kvm.
 
+%package -n kernel%{_alt_kernel}-misc-kvm
+Summary:	kvm - Linux kernel module
+Summary(pl.UTF-8):	kvm - moduł jądra Linuksa
+Release:	%{rel}@%{_kernel_ver_str}
+Group:		Base/Kernel
+%{?with_dist_kernel:%requires_releq_kernel}
+Requires(post,postun):	/sbin/depmod
+Requires(postun):	/usr/sbin/groupdel
+Requires(pre):	/usr/bin/getgid
+Requires(pre):	/usr/sbin/groupadd
+Requires:	module-init-tools >= 3.2.2-2
+
+%description -n kernel%{_alt_kernel}-misc-kvm
+kvm - Linux kernel module.
+
+%description -n kernel%{_alt_kernel}-misc-kvm -l pl.UTF-8
+kvm - moduł jądra Linuksa.
+
 %prep
 %setup -q -n %{pname}-%{version}
 
 %build
 # not ac stuff
 ./configure \
+	%{!?with_kernel:--with-patched-kernel} \
 	--disable-gcc-check \
 	--kerneldir=%{_kernelsrcdir} \
 	--prefix=%{_prefix} \
 	--kerneldir=$PWD/kernel \
-	--qemu-cflags="%{rpmcflags}"
+%if %{with userspace}
+	--enable-alsa \
+%else
+	--disable-gfx-check \
+	--disable-sdl \
+%endif
+	--qemu-cc="%{__cc}"
 
+%if %{with userspace}
 %{__make} qemu
+%endif
+
+%if %{with kernel}
+%build_kernel_modules -C kernel -m kvm,kvm-amd,kvm-intel
+%endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
+%if %{with userspace}
 %{__make} -C qemu install \
 	DESTDIR=$RPM_BUILD_ROOT
 
@@ -87,16 +138,28 @@ mv -f $RPM_BUILD_ROOT%{_bindir}/qemu-system-x86_64 $RPM_BUILD_ROOT%{_bindir}/%{p
 install kvm_stat $RPM_BUILD_ROOT%{_bindir}
 
 install -D scripts/65-kvm.rules $RPM_BUILD_ROOT/etc/udev/rules.d/kvm.rules
+%endif
 
-%pre
-%groupadd -g 160 kvm
-
-%postun
-%groupremove kvm
+%if %{with kernel}
+%install_kernel_modules -m kernel/{kvm-amd,kvm,kvm-intel} -d misc
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%pre    -n kernel%{_alt_kernel}-misc-kvm
+%groupadd -g 160 kvm
+
+%post   -n kernel%{_alt_kernel}-misc-kvm
+%depmod %{_kernel_ver}
+
+%postun -n kernel%{_alt_kernel}-misc-kvm
+%depmod %{_kernel_ver}
+if [ "$1" = "0" ]; then
+	%groupremove kvm
+fi
+
+%if %{with userspace}
 %files
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/*
@@ -107,3 +170,10 @@ rm -rf $RPM_BUILD_ROOT
 %files udev
 %defattr(644,root,root,755)
 %config(noreplace) %verify(not md5 mtime size) /etc/udev/rules.d/kvm.rules
+%endif
+
+%if %{with kernel}
+%files -n kernel%{_alt_kernel}-misc-kvm
+%defattr(644,root,root,755)
+/lib/modules/%{_kernel_ver}/misc/kvm*
+%endif
