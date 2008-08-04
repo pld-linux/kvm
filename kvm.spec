@@ -6,6 +6,7 @@
 %bcond_without  dist_kernel     	# allow non-distribution kernel
 %bcond_without  kernel                  # build for unpatched kernel (which doesn't provide kvm.ko already)
 %bcond_without  userspace               # don't build userspace utilities
+%bcond_with	verbose
 
 %if %{without kernel}
 %undefine	with_dist_kernel
@@ -23,12 +24,12 @@
 Summary:	Kernel-based Virtual Machine for Linux
 Summary(pl.UTF-8):	Oparta na jądrze maszyna wirtualna dla Linuksa
 Name:		%{pname}%{_alt_kernel}
-Version:	71
+Version:	72
 Release:	%{rel}
 License:	GPL v2
 Group:		Applications/System
 Source0:	http://dl.sourceforge.net/kvm/%{name}-%{version}.tar.gz
-# Source0-md5:	9c8e4551ca6b6f5a4662722bb163cf12
+# Source0-md5:	e4f99d05dee168200695850165cd760e
 URL:		http://kvm.sourceforge.net/
 BuildRequires:	bash
 %if %{with kernel}
@@ -108,7 +109,8 @@ kvm - moduł jądra Linuksa.
 	--kerneldir=$PWD/kernel
 
 %if %{with userspace}
-%{__make} qemu
+%{__make} qemu \
+	CC="%{__cc}"
 %endif
 
 %if %{with kernel}
