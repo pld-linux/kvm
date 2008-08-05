@@ -104,6 +104,8 @@ kvm - moduł jądra Linuksa.
 %prep
 %setup -q -n %{pname}-%{version}
 
+sed -e 's#rsync#-rsync#' kernel/Makefile
+
 %build
 # not ac stuff
 ./configure \
