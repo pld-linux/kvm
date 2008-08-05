@@ -105,7 +105,7 @@ kvm - moduł jądra Linuksa.
 %prep
 %setup -q -n %{pname}-%{version}
 
-%{!?with_kernel:sed -e 's# kernel ##g' Makefile}
+%{!?with_kernel:sed -i -e 's# kernel ##g' Makefile}
 
 %build
 # not ac stuff
