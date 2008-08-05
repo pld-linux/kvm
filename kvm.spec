@@ -134,7 +134,7 @@ rm -rf $RPM_BUILD_ROOT
 %{__make} -C qemu install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-%if ! %{with internal_qemu}
+%if %{without internal_qemu}
 # removing files which are provided by required qemu package
 rm -rf $RPM_BUILD_ROOT%{_datadir}/qemu $RPM_BUILD_ROOT%{_mandir} $RPM_BUILD_ROOT%{_docdir}
 rm -f $RPM_BUILD_ROOT%{_bindir}/qemu-img
