@@ -39,6 +39,7 @@ BuildRequires:	rpmbuild(macros) >= 1.379
 %if %{with userspace}
 BuildRequires:	SDL-devel
 BuildRequires:	alsa-lib-devel
+BuildRequireS:	perl-tools-pod
 BuildRequires:	zlib-devel
 %if %{with internal_qemu}
 Conflicts:	qemu
@@ -104,7 +105,7 @@ kvm - moduł jądra Linuksa.
 %prep
 %setup -q -n %{pname}-%{version}
 
-sed -e 's#rsync#-rsync#' kernel/Makefile
+%{!?with_kernel:sed -e 's# kernel ##g' Makefile}
 
 %build
 # not ac stuff
