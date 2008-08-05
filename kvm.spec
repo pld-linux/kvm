@@ -3,8 +3,10 @@
 #
 # Conditional build:
 %bcond_without  dist_kernel     	# allow non-distribution kernel
-%bcond_without  kernel                  # build for unpatched kernel (which doesn't provide kvm.ko already)
+%bcond_with	kernel                  # build for unpatched kernel (which doesn't provide kvm.ko already)
 %bcond_without  userspace               # don't build userspace utilities
+%bcond_with	verbose
+%bcond_with	internal_qemu
 
 %if %{without kernel}
 %undefine	with_dist_kernel
@@ -17,17 +19,17 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel	4
+%define		rel	1
 %define		pname	kvm
 Summary:	Kernel-based Virtual Machine for Linux
 Summary(pl.UTF-8):	Oparta na jądrze maszyna wirtualna dla Linuksa
 Name:		%{pname}%{_alt_kernel}
-Version:	60
+Version:	72
 Release:	%{rel}
 License:	GPL v2
 Group:		Applications/System
 Source0:	http://dl.sourceforge.net/kvm/%{pname}-%{version}.tar.gz
-# Source0-md5:	79d92d57ad3b6057a717b25bb20ee72c
+# Source0-md5:	e4f99d05dee168200695850165cd760e
 URL:		http://kvm.sourceforge.net/
 BuildRequires:	bash
 %if %{with kernel}
@@ -38,7 +40,11 @@ BuildRequires:	rpmbuild(macros) >= 1.379
 BuildRequires:	SDL-devel
 BuildRequires:	alsa-lib-devel
 BuildRequires:	zlib-devel
+%if %{with internal_qemu}
 Conflicts:	qemu
+%else
+Requires:	qemu
+%endif
 %endif
 # ppc broken?
 ExclusiveArch:	%{ix86} %{x8664} ia64
@@ -102,20 +108,15 @@ kvm - moduł jądra Linuksa.
 # not ac stuff
 ./configure \
 	%{!?with_kernel:--with-patched-kernel} \
+	%{!?with_userspace:--disable-sdl} \
 	--disable-gcc-check \
-	--kerneldir=%{_kernelsrcdir} \
+	--disable-werror \
 	--prefix=%{_prefix} \
-	--kerneldir=$PWD/kernel \
-%if %{with userspace}
-	--enable-alsa \
-%else
-	--disable-gfx-check \
-	--disable-sdl \
-%endif
-	--qemu-cc="%{__cc}"
+	--kerneldir=$PWD/kernel
 
 %if %{with userspace}
-%{__make} qemu
+%{__make} qemu \
+	CC="%{__cc}"
 %endif
 
 %if %{with kernel}
@@ -129,9 +130,11 @@ rm -rf $RPM_BUILD_ROOT
 %{__make} -C qemu install \
 	DESTDIR=$RPM_BUILD_ROOT
 
+%if ! %{with internal_qemu}
 # removing files which are provided by required qemu package
-#rm -rf $RPM_BUILD_ROOT%{_datadir}/qemu $RPM_BUILD_ROOT%{_mandir} $RPM_BUILD_ROOT%{_docdir}
-#rm -f $RPM_BUILD_ROOT%{_bindir}/qemu-img
+rm -rf $RPM_BUILD_ROOT%{_datadir}/qemu $RPM_BUILD_ROOT%{_mandir} $RPM_BUILD_ROOT%{_docdir}
+rm -f $RPM_BUILD_ROOT%{_bindir}/qemu-img
+%endif
 
 # changing binary name to avoid conflict with qemu
 mv -f $RPM_BUILD_ROOT%{_bindir}/qemu-system-x86_64 $RPM_BUILD_ROOT%{_bindir}/%{pname}
@@ -163,9 +166,12 @@ fi
 %files
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/*
+%attr(755,root,root) %{_bindir}/qemu-nbd
+%if %{with internal_qemu}
 %{_datadir}/qemu
 %{_mandir}/man1/qemu.1*
 %{_mandir}/man1/qemu-img.1*
+%endif
 
 %files udev
 %defattr(644,root,root,755)
