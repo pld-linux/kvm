@@ -54,6 +54,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 # some SPARC boot image in ELF format
 %define         _noautostrip    .*%{_datadir}/qemu/openbios-sparc32
+%define         _noautostrip    .*%{_datadir}/qemu/openbios-sparc64
 
 %description
 KVM (for Kernel-based Virtual Machine) is a full virtualization
