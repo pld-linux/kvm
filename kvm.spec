@@ -53,8 +53,7 @@ ExclusiveArch:	%{ix86} %{x8664} ia64
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 # some SPARC boot image in ELF format
-%define         _noautostrip    .*%{_datadir}/qemu/openbios-sparc32
-%define         _noautostrip    .*%{_datadir}/qemu/openbios-sparc64
+%define         _noautostrip .*%{_datadir}/qemu/openbios-sparc.*
 
 %description
 KVM (for Kernel-based Virtual Machine) is a full virtualization
