@@ -33,6 +33,7 @@ Source0:	http://dl.sourceforge.net/kvm/%{pname}-%{version}.tar.gz
 # Source0-md5:	e4f99d05dee168200695850165cd760e
 URL:		http://kvm.sourceforge.net/
 BuildRequires:	bash
+BuildRequires:	sed >= 4.0
 %if %{with kernel}
 BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.20.2
 BuildRequires:	rpmbuild(macros) >= 1.379
