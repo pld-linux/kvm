@@ -2,12 +2,12 @@
 # - doesn't build on ppc, fix this if possible
 #
 # Conditional build:
-%bcond_without  dist_kernel     	# allow non-distribution kernel
-%bcond_with	kernel                  # build for unpatched kernel (which doesn't provide kvm.ko already)
-%bcond_without  userspace               # don't build userspace utilities
-%bcond_with	verbose
-%bcond_with	internal_qemu
-
+%bcond_without	dist_kernel	# allow non-distribution kernel
+%bcond_with	kernel		# build for unpatched kernel (which doesn't provide kvm.ko already)
+%bcond_without	userspace	# don't build userspace utilities
+%bcond_with	verbose		# verbose kernel module build
+%bcond_with	internal_qemu	# use internal qemu
+#
 %if %{without kernel}
 %undefine	with_dist_kernel
 %endif
