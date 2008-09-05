@@ -1,5 +1,7 @@
+#
 # TODO:
 # - doesn't build on ppc, fix this if possible
+# - add groupadd/remove for group kvm for udev rules.
 #
 # Conditional build:
 %bcond_without	dist_kernel	# allow non-distribution kernel
