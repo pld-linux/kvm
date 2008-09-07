@@ -43,8 +43,11 @@ BuildRequires:	rpmbuild(macros) >= 1.379
 %if %{with userspace}
 BuildRequires:	SDL-devel
 BuildRequires:	alsa-lib-devel
-BuildRequireS:	perl-tools-pod
+BuildRequires:	perl-tools-pod
+BuildRequires:	rpm-pythonprov
+BuildRequires:	tetex
 BuildRequires:	zlib-devel
+BuildRequires:	which
 %if %{with internal_qemu}
 Conflicts:	qemu
 %else
@@ -116,6 +119,7 @@ sed -i -e 's#header-sync-$(if $(WANT_MODULE),n,y)#header-sync-n#g' Makefile
 ./configure \
 	%{!?with_kernel:--with-patched-kernel} \
 	%{!?with_userspace:--disable-sdl} \
+	%{!?with_userspace:--disable-gfx-check} \
 	--disable-gcc-check \
 	--disable-werror \
 	--prefix=%{_prefix} \
@@ -172,12 +176,15 @@ fi
 %if %{with userspace}
 %files
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/*
+%attr(755,root,root) %{_bindir}/kvm*
 %attr(755,root,root) %{_bindir}/qemu-nbd
 %if %{with internal_qemu}
+%attr(755,root,root) %{_bindir}/qemu-img
 %{_datadir}/qemu
+%{_docdir}/qemu
 %{_mandir}/man1/qemu.1*
 %{_mandir}/man1/qemu-img.1*
+%{_mandir}/man8/qemu-nbd.8*
 %endif
 
 %files udev
