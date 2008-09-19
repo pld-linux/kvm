@@ -55,7 +55,7 @@ Requires:	qemu
 %endif
 %endif
 # ppc broken?
-ExclusiveArch:	%{ix86} %{x8664} ia64
+ExclusiveArch:	%{ix86} %{x8664} ia64 ppc
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 # some SPARC boot image in ELF format
