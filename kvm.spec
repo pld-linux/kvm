@@ -36,6 +36,7 @@ Source0:	http://dl.sourceforge.net/kvm/%{pname}-%{version}.tar.gz
 URL:		http://kvm.qumranet.com/kvmwiki
 BuildRequires:	bash
 BuildRequires:	sed >= 4.0
+BuildRequires:	kernel%{_alt_kernel}-headers
 %if %{with kernel}
 BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.20.2
 BuildRequires:	rpmbuild(macros) >= 1.379
@@ -55,11 +56,17 @@ Requires:	qemu
 %endif
 %endif
 # ppc broken? needed libfdt fix
-ExclusiveArch:	%{ix86} %{x8664} ia64
+ExclusiveArch:	%{ix86} %{x8664} ia64 ppc
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 # some SPARC boot image in ELF format
 %define         _noautostrip .*%{_datadir}/qemu/openbios-sparc.*
+
+%ifarch ppc
+%define karch powerpc
+%else
+%define karch %{_arch}
+%endif
 
 %description
 KVM (for Kernel-based Virtual Machine) is a full virtualization
@@ -120,10 +127,14 @@ sed -i -e 's#header-sync-$(if $(WANT_MODULE),n,y)#header-sync-n#g' Makefile
 	%{!?with_kernel:--with-patched-kernel} \
 	%{!?with_userspace:--disable-sdl} \
 	%{!?with_userspace:--disable-gfx-check} \
+	--arch=%{karch} \
 	--disable-gcc-check \
 	--disable-werror \
 	--prefix=%{_prefix} \
-	--kerneldir=$PWD/kernel
+	--kerneldir=%{_kernelsrcdir}
+
+rm -f kernel/include/asm
+ln -s %{_kernelsrcdir}/include/asm-%{karch} kernel/include/asm
 
 %if %{with userspace}
 %{__make} qemu \
