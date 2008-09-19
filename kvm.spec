@@ -33,7 +33,7 @@ License:	GPL v2
 Group:		Applications/System
 Source0:	http://dl.sourceforge.net/kvm/%{pname}-%{version}.tar.gz
 # Source0-md5:	5a00ac6ee704fbf537a751522bd37d15
-URL:		http://kvm.sourceforge.net/
+URL:		http://kvm.qumranet.com/kvmwiki
 BuildRequires:	bash
 BuildRequires:	sed >= 4.0
 %if %{with kernel}
