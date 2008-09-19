@@ -62,10 +62,21 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 # some SPARC boot image in ELF format
 %define         _noautostrip .*%{_datadir}/qemu/openbios-sparc.*
 
+%ifarch %{ix86}
+%define carch i386
+%define karch x86
+%endif
+%ifarch %{x8664}
+%define carch x86_64
+%define karch x86
+%endif
+%ifarch ia64
+%define carch ia64
+%define karch ia64
+%endif
 %ifarch ppc
+%define carch powerpc
 %define karch powerpc
-%else
-%define karch %{_arch}
 %endif
 
 %description
@@ -127,7 +138,7 @@ sed -i -e 's#header-sync-$(if $(WANT_MODULE),n,y)#header-sync-n#g' Makefile
 	%{!?with_kernel:--with-patched-kernel} \
 	%{!?with_userspace:--disable-sdl} \
 	%{!?with_userspace:--disable-gfx-check} \
-	--arch=%{karch} \
+	--arch=%{carch} \
 	--disable-gcc-check \
 	--disable-werror \
 	--prefix=%{_prefix} \
