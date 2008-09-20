@@ -1,0 +1,48 @@
+diff -Nur kvm-75.broken/Makefile kvm-75/Makefile
+--- kvm-75.broken/Makefile	2008-09-07 18:38:33.000000000 +0200
++++ kvm-75/Makefile	2008-09-21 01:39:07.000000000 +0200
+@@ -23,7 +23,7 @@
+ ifneq '$(filter $(ARCH), i386 x86_64)' ''
+     qemu: extboot
+ endif
+-ifneq '$(filter $(ARCH), powerpc, ia64)' ''
++ifneq '$(filter $(ARCH), powerpc ia64)' ''
+     qemu: libfdt
+ endif
+ user: libkvm
+diff -Nur kvm-75.broken/qemu/dyngen.c kvm-75/qemu/dyngen.c
+--- kvm-75.broken/qemu/dyngen.c	2008-09-07 18:38:33.000000000 +0200
++++ kvm-75/qemu/dyngen.c	2008-09-21 01:39:07.000000000 +0200
+@@ -1347,8 +1347,9 @@
+         p = (void *)(p_end - 4);
+         if (p == p_start)
+             error("empty code for %s", name);
+-        if (get32((uint32_t *)p) != 0x4e800020)
+-            error("blr expected at the end of %s", name);
++	uint32_t last_op = get32( (uint32_t *) p );
++        if ( (last_op != 0x4e800020) && (( last_op & 0xfc000003) != 0x48000000) )
++            error("blr or b expected at the end of %s, got: 0x%.8x", name, last_op );
+         copy_size = p - p_start;
+     }
+ #elif defined(HOST_S390)
+diff -Nur kvm-75.broken/qemu/Makefile.target kvm-75/qemu/Makefile.target
+--- kvm-75.broken/qemu/Makefile.target	2008-09-07 18:38:33.000000000 +0200
++++ kvm-75/qemu/Makefile.target	2008-09-21 01:39:07.000000000 +0200
+@@ -319,6 +319,8 @@
+ OPC_H = gen-op.h dyngen-opc.h op.h
+ endif
+ 
++$(LIBOBJS): dyngen-opc.h
++
+ libqemu.a: $(LIBOBJS)
+ 	rm -f $@
+ 	$(AR) rcs $@ $(LIBOBJS)
+@@ -581,7 +583,7 @@
+ 
+ ifdef CONFIG_LIBFDT
+ LIBS += -lfdt
+-DEPLIBS += libfdt.a
++DEPLIBS += ../libfdt/libfdt.a
+ endif
+ 
+ # SCSI layer
