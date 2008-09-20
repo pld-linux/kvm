@@ -33,6 +33,7 @@ License:	GPL v2
 Group:		Applications/System
 Source0:	http://dl.sourceforge.net/kvm/%{pname}-%{version}.tar.gz
 # Source0-md5:	5a00ac6ee704fbf537a751522bd37d15
+Patch0:		%{name}-fixes.patch
 URL:		http://kvm.qumranet.com/kvmwiki
 BuildRequires:	bash
 BuildRequires:	sed >= 4.0
@@ -65,18 +66,22 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %ifarch %{ix86}
 %define carch i386
 %define karch x86
+%define qemuarch x86_64
 %endif
 %ifarch %{x8664}
 %define carch x86_64
 %define karch x86
+%define qemuarch x86_64
 %endif
 %ifarch ia64
 %define carch ia64
 %define karch ia64
+%define qemuarch ia64
 %endif
 %ifarch ppc
 %define carch powerpc
 %define karch powerpc
+%define qemuarch ppcemb
 %endif
 
 %description
@@ -129,6 +134,7 @@ kvm - moduł jądra Linuksa.
 
 %prep
 %setup -q -n %{pname}-%{version}
+%patch0 -p1
 
 sed -i -e 's#header-sync-$(if $(WANT_MODULE),n,y)#header-sync-n#g' Makefile
 
@@ -143,6 +149,8 @@ sed -i -e 's#header-sync-$(if $(WANT_MODULE),n,y)#header-sync-n#g' Makefile
 	--disable-werror \
 	--prefix=%{_prefix} \
 	--kerneldir=%{_kernelsrcdir}
+
+echo "CFLAGS=%{rpmcflags}" >> user/config.mak
 
 rm -f kernel/include/asm
 ln -s %{_kernelsrcdir}/include/asm-%{karch} kernel/include/asm
@@ -170,7 +178,7 @@ rm -f $RPM_BUILD_ROOT%{_bindir}/qemu-img
 %endif
 
 # changing binary name to avoid conflict with qemu
-mv -f $RPM_BUILD_ROOT%{_bindir}/qemu-system-x86_64 $RPM_BUILD_ROOT%{_bindir}/%{pname}
+mv -f $RPM_BUILD_ROOT%{_bindir}/qemu-system-%{qemuarch} $RPM_BUILD_ROOT%{_bindir}/%{pname}
 install kvm_stat $RPM_BUILD_ROOT%{_bindir}
 
 install -D scripts/65-kvm.rules $RPM_BUILD_ROOT/etc/udev/rules.d/kvm.rules
