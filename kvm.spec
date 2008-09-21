@@ -152,8 +152,9 @@ sed -i -e 's#header-sync-$(if $(WANT_MODULE),n,y)#header-sync-n#g' Makefile
 
 echo "CFLAGS=%{rpmcflags}" >> user/config.mak
 
-rm -f kernel/include/asm
-ln -s %{_kernelsrcdir}/include/asm-%{karch} kernel/include/asm
+rm -r kernel/include/*
+ln -s %{_kernelsrcdir}/include/* kernel/include
+ln -s asm-%{karch} kernel/include/asm
 
 %if %{with userspace}
 %{__make} qemu \
