@@ -37,9 +37,9 @@ Patch0:		%{name}-fixes.patch
 URL:		http://kvm.qumranet.com/kvmwiki
 BuildRequires:	bash
 BuildRequires:	sed >= 4.0
-BuildRequires:	kernel%{_alt_kernel}-headers
+BuildRequires:	kernel%{_alt_kernel}-headers >= 3:2.6.26
 %if %{with kernel}
-BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.20.2
+BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.26
 BuildRequires:	rpmbuild(macros) >= 1.379
 %endif
 %if %{with userspace}
