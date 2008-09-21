@@ -28,15 +28,15 @@ diff -Nur kvm-75.broken/qemu/dyngen.c kvm-75/qemu/dyngen.c
 diff -Nur kvm-75.broken/qemu/Makefile.target kvm-75/qemu/Makefile.target
 --- kvm-75.broken/qemu/Makefile.target	2008-09-07 18:38:33.000000000 +0200
 +++ kvm-75/qemu/Makefile.target	2008-09-21 01:39:07.000000000 +0200
-@@ -319,6 +319,8 @@
+@@ -317,6 +317,8 @@
+ 
+ ifdef CONFIG_DYNGEN_OP
  OPC_H = gen-op.h dyngen-opc.h op.h
++
++$(LIBOBJS): dyngen-opc.h
  endif
  
-+$(LIBOBJS): dyngen-opc.h
-+
  libqemu.a: $(LIBOBJS)
- 	rm -f $@
- 	$(AR) rcs $@ $(LIBOBJS)
 @@ -581,7 +583,7 @@
  
  ifdef CONFIG_LIBFDT
