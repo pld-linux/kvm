@@ -27,12 +27,12 @@ Summary:	Kernel-based Virtual Machine for Linux
 Summary(pl.UTF-8):	Oparta na jądrze maszyna wirtualna dla Linuksa
 Name:		%{pname}%{_alt_kernel}
 # http://kvm.qumranet.com/kvmwiki/choose_the_right_kvm_%26_kernel_version
-Version:	78
+Version:	80
 Release:	%{rel}
 License:	GPL v2
 Group:		Applications/System
 Source0:	http://dl.sourceforge.net/kvm/%{pname}-%{version}.tar.gz
-# Source0-md5:	54b062575aeeaa424fa0d5aa46c284a9
+# Source0-md5:	d727b1aeabeb1452edd2be07216bada9
 Patch0:		%{name}-fixes.patch
 URL:		http://kvm.qumranet.com/kvmwiki
 BuildRequires:	bash
@@ -157,7 +157,7 @@ ln -s %{_kernelsrcdir}/include/* kernel/include
 ln -s asm-%{karch} kernel/include/asm
 
 %if %{with userspace}
-%{__make} qemu \
+%{__make} qemu -j1 \
 	CC="%{__cc}"
 %endif
 
