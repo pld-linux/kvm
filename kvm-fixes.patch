@@ -1,15 +1,3 @@
-diff -Nur kvm-75.broken/Makefile kvm-75/Makefile
---- kvm-75.broken/Makefile	2008-09-07 18:38:33.000000000 +0200
-+++ kvm-75/Makefile	2008-09-21 01:39:07.000000000 +0200
-@@ -23,7 +23,7 @@
- ifneq '$(filter $(ARCH), i386 x86_64)' ''
-     qemu: extboot
- endif
--ifneq '$(filter $(ARCH), powerpc, ia64)' ''
-+ifneq '$(filter $(ARCH), powerpc ia64)' ''
-     qemu: libfdt
- endif
- user: libkvm
 diff -Nur kvm-75.broken/qemu/dyngen.c kvm-75/qemu/dyngen.c
 --- kvm-75.broken/qemu/dyngen.c	2008-09-07 18:38:33.000000000 +0200
 +++ kvm-75/qemu/dyngen.c	2008-09-21 01:39:07.000000000 +0200
@@ -37,12 +25,14 @@ diff -Nur kvm-75.broken/qemu/Makefile.target kvm-75/qemu/Makefile.target
  endif
  
  libqemu.a: $(LIBOBJS)
-@@ -581,7 +583,7 @@
+--- kvm-80/qemu/qemu-kvm-powerpc.c~orig	2008-12-07 11:12:19.000000000 +0100
++++ kvm-80/qemu/qemu-kvm-powerpc.c	2008-12-08 16:49:46.000000000 +0100
+@@ -31,7 +31,7 @@
  
- ifdef CONFIG_LIBFDT
- LIBS += -lfdt
--DEPLIBS += libfdt.a
-+DEPLIBS += ../libfdt/libfdt.a
- endif
+ void cpu_reset(CPUState *env)
+ {
+-	memset(env->breakpoints, 0, sizeof(env->breakpoints));
++	memset(&env->breakpoints, 0, sizeof(env->breakpoints));
+ 	cpu_ppc_reset(env);
+ }
  
- # SCSI layer
