@@ -139,11 +139,19 @@ kvm - moduł jądra Linuksa.
 sed -i -e 's#header-sync-$(if $(WANT_MODULE),n,y)#header-sync-n#g' Makefile
 
 %build
+%if %{without kernel}
+# qemu/configure uses linux/kvm.h to detect available features (KVM_CAP_* defs).
+rm -r kernel/include/*
+ln -s %{_kernelsrcdir}/include/* kernel/include
+ln -s asm-%{karch} kernel/include/asm
+%endif
+
 # not ac stuff
 ./configure \
 	%{!?with_kernel:--with-patched-kernel} \
 	%{!?with_userspace:--disable-sdl} \
 	%{!?with_userspace:--disable-gfx-check} \
+	--audio-drv-list=oss,alsa \
 	--arch=%{carch} \
 	--disable-gcc-check \
 	--disable-werror \
@@ -152,12 +160,8 @@ sed -i -e 's#header-sync-$(if $(WANT_MODULE),n,y)#header-sync-n#g' Makefile
 
 echo "CFLAGS=%{rpmcflags}" >> user/config.mak
 
-rm -r kernel/include/*
-ln -s %{_kernelsrcdir}/include/* kernel/include
-ln -s asm-%{karch} kernel/include/asm
-
 %if %{with userspace}
-%{__make} qemu -j1 \
+%{__make} qemu \
 	CC="%{__cc}"
 %endif
 
