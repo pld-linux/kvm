@@ -13,9 +13,9 @@
 %if %{without kernel}
 %undefine	with_dist_kernel
 %endif
-%if "%{_alt_kernel}" != "%{nil}"
-%undefine	with_userspace
-%endif
+#%%if "%{_alt_kernel}" != "%{nil}"
+#%%undefine	with_userspace
+#%%endif
 %if %{without userspace}
 # nothing to be placed to debuginfo package
 %define		_enable_debug_packages	0
@@ -33,7 +33,7 @@ License:	GPL v2
 Group:		Applications/System
 Source0:	http://dl.sourceforge.net/kvm/%{pname}-%{version}.tar.gz
 # Source0-md5:	d727b1aeabeb1452edd2be07216bada9
-Patch0:		%{name}-fixes.patch
+Patch0:		kvm-fixes.patch
 URL:		http://kvm.qumranet.com/kvmwiki
 BuildRequires:	bash
 BuildRequires:	sed >= 4.0
@@ -134,7 +134,7 @@ kvm - moduł jądra Linuksa.
 
 %prep
 %setup -q -n %{pname}-%{version}
-#%patch0 -p1
+%patch0 -p1
 
 sed -i -e 's#header-sync-$(if $(WANT_MODULE),n,y)#header-sync-n#g' Makefile
 
