@@ -56,8 +56,8 @@ Conflicts:	qemu
 Requires:	qemu
 %endif
 %endif
-# ppc broken? needed libfdt fix
-ExclusiveArch:	%{ix86} %{x8664} ia64 ppc
+# noone to test ppc
+ExclusiveArch:	%{ix86} %{x8664} ia64
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 # some SPARC boot image in ELF format
@@ -134,7 +134,7 @@ kvm - moduł jądra Linuksa.
 
 %prep
 %setup -q -n %{pname}-%{version}
-%patch0 -p1
+#%%patch0 -p1
 
 sed -i -e 's#header-sync-$(if $(WANT_MODULE),n,y)#header-sync-n#g' Makefile
 
