@@ -1,6 +1,5 @@
 #
 # TODO:
-# - doesn't build on ppc, fix this if possible
 # - add groupadd/remove for group kvm for udev rules.
 #
 # Conditional build:
@@ -9,12 +8,15 @@
 %bcond_without	userspace	# don't build userspace utilities
 %bcond_with	verbose		# verbose kernel module build
 %bcond_with	internal_qemu	# use internal qemu
+%bcond_with	alt_kernel_userspace # allow building userspace with alt_kernel set
 #
 %if %{without kernel}
 %undefine	with_dist_kernel
 %endif
+%if %{without alt_kernel_userspace}
 %if "%{_alt_kernel}" != "%{nil}"
 %undefine	with_userspace
+%endif
 %endif
 %if %{without userspace}
 # nothing to be placed to debuginfo package
