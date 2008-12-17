@@ -36,6 +36,7 @@ Group:		Applications/System
 Source0:	http://dl.sourceforge.net/kvm/%{pname}-%{version}.tar.gz
 # Source0-md5:	499f1856d30aa72ef872becaea684f49
 Patch0:		%{pname}-fixes.patch
+Patch1:		%{pname}-kernel-release.patch
 URL:		http://kvm.qumranet.com/kvmwiki
 BuildRequires:	bash
 BuildRequires:	sed >= 4.0
@@ -136,9 +137,11 @@ kvm - moduł jądra Linuksa.
 
 %prep
 %setup -q -n %{pname}-%{version}
-#%%patch0 -p1
+#patch0 -p1
+%patch1 -p1
 
-sed -i -e 's#header-sync-$(if $(WANT_MODULE),n,y)#header-sync-n#g' Makefile
+sed -i 's#header-sync-$(if $(WANT_MODULE),n,y)#header-sync-n#g' Makefile
+sed -i 's#^depmod_version=$#depmod_version=%{_kernel_ver}#' configure
 
 %build
 %if %{without kernel}
@@ -147,8 +150,6 @@ rm -r kernel/include/*
 ln -s %{_kernelsrcdir}/include/* kernel/include
 ln -s asm-%{karch} kernel/include/asm
 %endif
-
-[ -f %{_kernelsrcdir}/include/config/kernel.release ]
 
 # not ac stuff
 ./configure \
