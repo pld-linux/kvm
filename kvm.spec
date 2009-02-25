@@ -40,9 +40,9 @@ Patch1:		%{pname}-kernel-release.patch
 URL:		http://kvm.qumranet.com/kvmwiki
 BuildRequires:	bash
 BuildRequires:	sed >= 4.0
-BuildRequires:	kernel%{_alt_kernel}-headers >= 3:2.6.26
+BuildRequires:	kernel%{_alt_kernel}-headers >= 3:2.6.28
 %if %{with kernel}
-BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.26
+BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.28
 BuildRequires:	rpmbuild(macros) >= 1.379
 %endif
 %if %{with userspace}
@@ -147,8 +147,8 @@ sed -i 's#^depmod_version=$#depmod_version=%{_kernel_ver}#' configure
 %if %{without kernel}
 # qemu/configure uses linux/kvm.h to detect available features (KVM_CAP_* defs).
 rm -r kernel/include/*
-ln -s %{_kernelsrcdir}/include/* kernel/include
-ln -s asm-%{karch} kernel/include/asm
+ln -s %{_kernelsrcdir}/include/linux kernel/include
+ln -s %{_kernelsrcdir}/arch/%{karch}/include/asm kernel/include
 %endif
 
 # not ac stuff
