@@ -1,6 +1,6 @@
-#
 # TODO:
 # - add groupadd/remove for group kvm for udev rules.
+# - file /usr/bin/qemu-nbd from install of qemu-0.10.0-2k.i686 conflicts with file from package kvm-75-1.i686
 #
 # Conditional build:
 %bcond_without	dist_kernel	# allow non-distribution kernel
