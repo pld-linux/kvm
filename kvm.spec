@@ -35,7 +35,7 @@
 Summary:	Kernel-based Virtual Machine for Linux
 Summary(pl.UTF-8):	Oparta na jądrze maszyna wirtualna dla Linuksa
 Name:		%{pname}%{_alt_kernel}
-# http://kvm.qumranet.com/kvmwiki/choose_the_right_kvm_%26_kernel_version
+# http://www.linux-kvm.org/page/Choose_the_right_kvm_%26_kernel_version
 Version:	86
 Release:	%{rel}
 License:	GPL v2
@@ -44,7 +44,7 @@ Source0:	http://dl.sourceforge.net/kvm/%{pname}-%{version}.tar.gz
 # Source0-md5:	cd8cc78c56ddaaf0be421919f8a6835c
 Patch0:		%{pname}-fixes.patch
 Patch1:		%{pname}-kernel-release.patch
-URL:		http://kvm.qumranet.com/kvmwiki
+URL:		http://www.linux-kvm.org/
 BuildRequires:	bash
 BuildRequires:	sed >= 4.0
 BuildRequires:	kernel%{_alt_kernel}-headers >= 3:2.6.28
