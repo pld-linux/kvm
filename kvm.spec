@@ -1,6 +1,13 @@
 # TODO:
-# - add groupadd/remove for group kvm for udev rules.
-# - file /usr/bin/qemu-nbd from install of qemu-0.10.0-2k.i686 conflicts with file from package kvm-75-1.i686
+# - add groupadd/remove for group kvm for udev rules 
+#   or add the kvm group to the setup package.
+# - kernel part - doesn't build now, but should we care in the HEAD?
+#   btw. with kernel bcond we require >= 3:2.6.28 kernels which 
+#   could have the kvm stuff on its own
+# NOTE:
+# - as of 86 the source structure have changed comparing to 75 or 81
+#   it looks like kvm is going to be merged with qemu, so in this
+#   release the kvm is a subdirectory of the main qemu stuff
 #
 # Conditional build:
 %bcond_without	dist_kernel	# allow non-distribution kernel
@@ -29,12 +36,12 @@ Summary:	Kernel-based Virtual Machine for Linux
 Summary(pl.UTF-8):	Oparta na jądrze maszyna wirtualna dla Linuksa
 Name:		%{pname}%{_alt_kernel}
 # http://kvm.qumranet.com/kvmwiki/choose_the_right_kvm_%26_kernel_version
-Version:	81
+Version:	86
 Release:	%{rel}
 License:	GPL v2
 Group:		Applications/System
 Source0:	http://dl.sourceforge.net/kvm/%{pname}-%{version}.tar.gz
-# Source0-md5:	499f1856d30aa72ef872becaea684f49
+# Source0-md5:	cd8cc78c56ddaaf0be421919f8a6835c
 Patch0:		%{pname}-fixes.patch
 Patch1:		%{pname}-kernel-release.patch
 URL:		http://kvm.qumranet.com/kvmwiki
@@ -49,6 +56,7 @@ BuildRequires:	rpmbuild(macros) >= 1.379
 BuildRequires:	SDL-devel
 BuildRequires:	alsa-lib-devel
 BuildRequires:	perl-tools-pod
+BuildRequires:	texi2html
 BuildRequires:	rpm-pythonprov
 BuildRequires:	tetex
 BuildRequires:	zlib-devel
@@ -63,8 +71,8 @@ Requires:	qemu
 ExclusiveArch:	%{ix86} %{x8664} ia64
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-# some SPARC boot image in ELF format
-%define         _noautostrip .*%{_datadir}/qemu/openbios-sparc.*
+# some SPARC (and PPC) boot image in ELF format
+%define         _noautostrip .*%{_datadir}/qemu/openbios-.*
 
 %ifarch %{ix86}
 %define carch i386
@@ -146,56 +154,66 @@ sed -i 's#^depmod_version=$#depmod_version=%{_kernel_ver}#' configure
 %build
 %if %{without kernel}
 # qemu/configure uses linux/kvm.h to detect available features (KVM_CAP_* defs).
-rm -r kernel/include/*
-ln -s %{_kernelsrcdir}/include/linux kernel/include
-ln -s %{_kernelsrcdir}/arch/%{karch}/include/asm kernel/include
+rm -r kvm/kernel/include/*
+ln -s %{_kernelsrcdir}/include/linux kvm/kernel/include
+ln -s %{_kernelsrcdir}/arch/%{karch}/include/asm kvm/kernel/include
 %endif
+
+# we build kernel modules with build_kernel_modules macro
+mv -f kvm/kernel/configure kvm/kernel/configure_kvm
 
 # not ac stuff
 ./configure \
-	%{!?with_kernel:--with-patched-kernel} \
 	%{!?with_userspace:--disable-sdl} \
 	%{!?with_userspace:--disable-gfx-check} \
 	--audio-drv-list=oss,alsa \
-	--arch=%{carch} \
-	--disable-gcc-check \
+	--enable-mixemu \
 	--disable-werror \
-	--prefix=%{_prefix} \
-	--kerneldir=%{_kernelsrcdir}
+	--prefix=%{_prefix} 
 
-echo "CFLAGS=%{rpmcflags}" >> user/config.mak
+%if %{with kernel}
+cd kvm/kernel
+./configure_kvm \
+	--arch=%{carch} \
+	--kerneldir=%{_kernelsrcdir}
+cd ../..
+%endif
+
+echo "CFLAGS=%{rpmcflags}" >> kvm/user/config.mak
 
 %if %{with userspace}
-%{__make} qemu \
+%{__make} \
 	CC="%{__cc}"
 %endif
 
 %if %{with kernel}
-%build_kernel_modules -C kernel -m kvm,kvm-amd,kvm-intel
+%build_kernel_modules -C kvm/kernel -m kvm,kvm-amd,kvm-intel
 %endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
 %if %{with userspace}
-%{__make} -C qemu install \
+%{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
 %if %{without internal_qemu}
 # removing files which are provided by required qemu package
 rm -rf $RPM_BUILD_ROOT%{_datadir}/qemu $RPM_BUILD_ROOT%{_mandir} $RPM_BUILD_ROOT%{_docdir}
 rm -f $RPM_BUILD_ROOT%{_bindir}/qemu-img
+rm -f $RPM_BUILD_ROOT%{_bindir}/qemu-nbd
+rm -f $RPM_BUILD_ROOT%{_bindir}/qemu-io
 %endif
 
 # changing binary name to avoid conflict with qemu
 mv -f $RPM_BUILD_ROOT%{_bindir}/qemu-system-%{qemuarch} $RPM_BUILD_ROOT%{_bindir}/%{pname}
-install kvm_stat $RPM_BUILD_ROOT%{_bindir}
+install kvm/kvm_stat $RPM_BUILD_ROOT%{_bindir}
 
-install -D scripts/65-kvm.rules $RPM_BUILD_ROOT/etc/udev/rules.d/kvm.rules
+install -D kvm/scripts/65-kvm.rules $RPM_BUILD_ROOT/etc/udev/rules.d/kvm.rules
 %endif
 
 %if %{with kernel}
-%install_kernel_modules -m kernel/{kvm-amd,kvm,kvm-intel} -d misc
+%install_kernel_modules -m kvm/kernel/{kvm-amd,kvm,kvm-intel} -d misc
 %endif
 
 %clean
@@ -217,9 +235,10 @@ fi
 %files
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/kvm*
-%attr(755,root,root) %{_bindir}/qemu-nbd
 %if %{with internal_qemu}
+%attr(755,root,root) %{_bindir}/qemu-nbd
 %attr(755,root,root) %{_bindir}/qemu-img
+%attr(755,root,root) %{_bindir}/qemu-io
 %{_datadir}/qemu
 %{_docdir}/qemu
 %{_mandir}/man1/qemu.1*

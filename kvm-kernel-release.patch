@@ -1,15 +1,18 @@
---- kvm-81/configure.orig	2008-12-14 14:16:27.000000000 +0100
-+++ kvm-81/configure	2008-12-17 00:56:42.841973719 +0100
-@@ -119,21 +119,6 @@
+--- kvm-86/kvm/kernel/configure.orig	2009-05-20 15:59:56.000000000 +0200
++++ kvm-86/kvm/kernel/configure	2009-06-18 00:21:45.000000000 +0200
+@@ -94,24 +94,6 @@ if [ -d "$kerneldir/include2" ]; then
      kernelsourcedir=${kerneldir%/*}/source
  fi
  
--if [ -n "$no_uname" ]; then
+-if [ -n "$no_uname" -a "$want_module" ]; then
 -    if [ -e "$kerneldir/.kernelrelease" ]; then
 -        depmod_version=`cat "$kerneldir/.kernelrelease"`
 -
 -    elif [ -e "$kerneldir/include/config/kernel.release" ]; then
 -            depmod_version=`cat "$kerneldir/include/config/kernel.release"`
+-    elif [ -e "$kerneldir/.config" ]; then
+-	depmod_version=$(awk '/Linux kernel version:/ { print $NF }' \
+-			 "$kerneldir/.config")
 -    else
 -        echo
 -        echo "Error: kernelversion not found"
@@ -19,6 +22,6 @@
 -    fi
 -fi
 -
- #configure user dir
- (cd user; ./configure --prefix="$prefix" --kerneldir="$libkvm_kerneldir" \
-           --arch="$arch" --processor="$processor" \
+ rm -f include/asm include-compat/asm
+ mkdir -p include
+ ln -sf asm-"$karch" include/asm
