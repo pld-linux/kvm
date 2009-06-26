@@ -8,6 +8,10 @@
 # - as of 86 the source structure have changed comparing to 75 or 81
 #   it looks like kvm is going to be merged with qemu, so in this
 #   release the kvm is a subdirectory of the main qemu stuff
+# - for 2.6.28.10+ kernels one could build the recent qemu (0.10.5) 
+#   with a KVM support - the presence of the support depends on the 
+#   contents of the <linux/kvm.h> header files checked by configure 
+#   at buildtime.
 #
 # Conditional build:
 %bcond_without	dist_kernel	# allow non-distribution kernel
@@ -36,12 +40,12 @@ Summary:	Kernel-based Virtual Machine for Linux
 Summary(pl.UTF-8):	Oparta na jądrze maszyna wirtualna dla Linuksa
 Name:		%{pname}%{_alt_kernel}
 # http://www.linux-kvm.org/page/Choose_the_right_kvm_%26_kernel_version
-Version:	86
+Version:	87
 Release:	%{rel}
 License:	GPL v2
 Group:		Applications/System
 Source0:	http://dl.sourceforge.net/kvm/%{pname}-%{version}.tar.gz
-# Source0-md5:	cd8cc78c56ddaaf0be421919f8a6835c
+# Source0-md5:	a03ccefb0d096f8efee2b07b56555b33
 Patch0:		%{pname}-fixes.patch
 Patch1:		%{pname}-kernel-release.patch
 URL:		http://www.linux-kvm.org/
