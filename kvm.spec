@@ -40,12 +40,12 @@ Summary:	Kernel-based Virtual Machine for Linux
 Summary(pl.UTF-8):	Oparta na jądrze maszyna wirtualna dla Linuksa
 Name:		%{pname}%{_alt_kernel}
 # http://www.linux-kvm.org/page/Choose_the_right_kvm_%26_kernel_version
-Version:	87
+Version:	88
 Release:	%{rel}
 License:	GPL v2
 Group:		Applications/System
 Source0:	http://dl.sourceforge.net/kvm/%{pname}-%{version}.tar.gz
-# Source0-md5:	a03ccefb0d096f8efee2b07b56555b33
+# Source0-md5:	02371948fcee1fa2a77e7a457384d71c
 Patch0:		%{pname}-fixes.patch
 Patch1:		%{pname}-kernel-release.patch
 URL:		http://www.linux-kvm.org/
