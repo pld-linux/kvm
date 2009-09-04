@@ -1,6 +1,5 @@
 # TODO:
-# - add groupadd/remove for group kvm for udev rules 
-#   or add the kvm group to the setup package.
+# - consider moving kvm groupadd/remove from -udev and kernel package to main package
 # - kernel part - doesn't build now, but should we care in the HEAD?
 #   btw. with kernel bcond we require >= 3:2.6.28 kernels which 
 #   could have the kvm stuff on its own
@@ -242,6 +241,14 @@ rm -rf $RPM_BUILD_ROOT
 
 %postun -n kernel%{_alt_kernel}-misc-kvm
 %depmod %{_kernel_ver}
+if [ "$1" = "0" ]; then
+	%groupremove kvm
+fi
+
+%pre udev
+%groupadd -g 160 kvm
+
+%postun
 if [ "$1" = "0" ]; then
 	%groupremove kvm
 fi
