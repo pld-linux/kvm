@@ -1,0 +1,15 @@
+--- kvm-88/configure~	2009-09-05 06:16:49.266798132 +0200
++++ kvm-88/configure	2009-09-05 06:22:32.273430417 +0200
+@@ -1195,10 +1195,10 @@
+ #endif
+ int main(void) { resize_term(0, 0); return curses_version(); }
+ EOF
+-  if $cc $ARCH_CFLAGS -o $TMPE $TMPC -lncurses > /dev/null 2> /dev/null ; then
++  if $cc $ARCH_CFLAGS $CFLAGS -o $TMPE $TMPC -lncurses > /dev/null 2> /dev/null ; then
+     curses=yes
+     ncurses=yes
+-  elif $cc $ARCH_CFLAGS -o $TMPE $TMPC -lcurses > /dev/null 2> /dev/null ; then
++  elif $cc $ARCH_CFLAGS $CFLAGS -o $TMPE $TMPC -lcurses > /dev/null 2> /dev/null ; then
+     curses=yes
+   fi
+ fi # test "$curses"
