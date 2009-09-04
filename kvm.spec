@@ -59,6 +59,7 @@ BuildRequires:	rpmbuild(macros) >= 1.379
 %if %{with userspace}
 BuildRequires:	SDL-devel
 BuildRequires:	alsa-lib-devel
+BuildRequires:	pciutils-devel
 BuildRequires:	perl-tools-pod
 BuildRequires:	rpm-pythonprov
 BuildRequires:	texi2html
