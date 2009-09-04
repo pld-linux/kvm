@@ -60,11 +60,11 @@ BuildRequires:	rpmbuild(macros) >= 1.379
 BuildRequires:	SDL-devel
 BuildRequires:	alsa-lib-devel
 BuildRequires:	perl-tools-pod
-BuildRequires:	texi2html
 BuildRequires:	rpm-pythonprov
+BuildRequires:	texi2html
 BuildRequires:	tetex
-BuildRequires:	zlib-devel
 BuildRequires:	which
+BuildRequires:	zlib-devel
 %if %{with internal_qemu}
 Conflicts:	qemu
 %else
@@ -171,6 +171,7 @@ mv -f kvm/kernel/configure kvm/kernel/configure_kvm
 	%{!?with_userspace:--disable-sdl} \
 	%{!?with_userspace:--disable-gfx-check} \
 	--audio-drv-list=oss,alsa \
+	--cc="%{__cc}" \
 	--enable-mixemu \
 	--disable-werror \
 	--prefix=%{_prefix} 
