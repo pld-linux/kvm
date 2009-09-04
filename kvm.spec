@@ -48,6 +48,7 @@ Source0:	http://dl.sourceforge.net/kvm/%{pname}-%{version}.tar.gz
 # Source0-md5:	02371948fcee1fa2a77e7a457384d71c
 Patch0:		%{pname}-fixes.patch
 Patch1:		%{pname}-kernel-release.patch
+Patch2:		%{pname}-ncurses.patch
 URL:		http://www.linux-kvm.org/
 BuildRequires:	bash
 BuildRequires:	sed >= 4.0
@@ -59,8 +60,13 @@ BuildRequires:	rpmbuild(macros) >= 1.379
 %if %{with userspace}
 BuildRequires:	SDL-devel
 BuildRequires:	alsa-lib-devel
+BuildRequires:	bluez-libs-devel
+BuildRequires:	curl-devel
+BuildRequires:	ncurses-devel
 BuildRequires:	pciutils-devel
+BuildRequires:	perl-Encode
 BuildRequires:	perl-tools-pod
+BuildRequires:	pkgconfig
 BuildRequires:	rpm-pythonprov
 BuildRequires:	texi2html
 BuildRequires:	tetex
@@ -152,6 +158,7 @@ kvm - moduł jądra Linuksa.
 %setup -q -n %{pname}-%{version}
 #patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 sed -i 's#header-sync-$(if $(WANT_MODULE),n,y)#header-sync-n#g' Makefile
 sed -i 's#^depmod_version=$#depmod_version=%{_kernel_ver}#' configure
@@ -173,6 +180,8 @@ mv -f kvm/kernel/configure kvm/kernel/configure_kvm
 	%{!?with_userspace:--disable-gfx-check} \
 	--audio-drv-list=oss,alsa \
 	--cc="%{__cc}" \
+	--extra-cflags="%{rpmcflags} -I/usr/include/ncurses" \
+	--extra-ldflags="%{rpmldflags}" \
 	--enable-mixemu \
 	--disable-werror \
 	--prefix=%{_prefix} 
