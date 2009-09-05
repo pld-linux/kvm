@@ -1,15 +1,15 @@
 # TODO:
 # - consider moving kvm groupadd/remove from -udev and kernel package to main package
 # - kernel part - doesn't build now, but should we care in the HEAD?
-#   btw. with kernel bcond we require >= 3:2.6.28 kernels which 
+#   btw. with kernel bcond we require >= 3:2.6.28 kernels which
 #   could have the kvm stuff on its own
 # NOTE:
 # - as of 86 the source structure have changed comparing to 75 or 81
 #   it looks like kvm is going to be merged with qemu, so in this
 #   release the kvm is a subdirectory of the main qemu stuff
-# - for 2.6.28.10+ kernels one could build the recent qemu (0.10.5) 
-#   with a KVM support - the presence of the support depends on the 
-#   contents of the <linux/kvm.h> header files checked by configure 
+# - for 2.6.28.10+ kernels one could build the recent qemu (0.10.5)
+#   with a KVM support - the presence of the support depends on the
+#   contents of the <linux/kvm.h> header files checked by configure
 #   at buildtime.
 #
 # Conditional build:
@@ -50,8 +50,8 @@ Patch1:		%{pname}-kernel-release.patch
 Patch2:		%{pname}-ncurses.patch
 URL:		http://www.linux-kvm.org/
 BuildRequires:	bash
-BuildRequires:	sed >= 4.0
 BuildRequires:	kernel%{_alt_kernel}-headers >= 3:2.6.28
+BuildRequires:	sed >= 4.0
 %if %{with kernel}
 BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.28
 BuildRequires:	rpmbuild(macros) >= 1.379
@@ -67,10 +67,15 @@ BuildRequires:	perl-Encode
 BuildRequires:	perl-tools-pod
 BuildRequires:	pkgconfig
 BuildRequires:	rpm-pythonprov
-BuildRequires:	texi2html
+BuildRequires:	rpmbuild(macros) >= 1.202
 BuildRequires:	tetex
+BuildRequires:	texi2html
 BuildRequires:	which
 BuildRequires:	zlib-devel
+Requires(postun):	/usr/sbin/groupdel
+Requires(pre):	/usr/bin/getgid
+Requires(pre):	/usr/sbin/groupadd
+Provides:	group(kvm)
 %if %{with internal_qemu}
 Conflicts:	qemu
 %else
@@ -127,7 +132,7 @@ dysk, kartę graficzną itp.
 %package udev
 Summary:	kvm udev scripts
 Summary(pl.UTF-8):	Skrypty udev dla kvm
-Group:		Application/System
+Group:		Applications/System
 
 %description udev
 kvm udev scripts.
@@ -183,7 +188,7 @@ mv -f kvm/kernel/configure kvm/kernel/configure_kvm
 	--extra-ldflags="%{rpmldflags}" \
 	--enable-mixemu \
 	--disable-werror \
-	--prefix=%{_prefix} 
+	--prefix=%{_prefix}
 
 %if %{with kernel}
 cd kvm/kernel
