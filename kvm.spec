@@ -133,6 +133,7 @@ dysk, kartę graficzną itp.
 Summary:	kvm udev scripts
 Summary(pl.UTF-8):	Skrypty udev dla kvm
 Group:		Applications/System
+Requires:	group(kvm)
 
 %description udev
 kvm udev scripts.
@@ -226,9 +227,8 @@ rm -f $RPM_BUILD_ROOT%{_bindir}/qemu-io
 
 # changing binary name to avoid conflict with qemu
 mv -f $RPM_BUILD_ROOT%{_bindir}/qemu-system-%{qemuarch} $RPM_BUILD_ROOT%{_bindir}/%{pname}
-install kvm/kvm_stat $RPM_BUILD_ROOT%{_bindir}
-
-install -D kvm/scripts/65-kvm.rules $RPM_BUILD_ROOT/etc/udev/rules.d/kvm.rules
+install -p kvm/kvm_stat $RPM_BUILD_ROOT%{_bindir}
+install -p -D kvm/scripts/65-kvm.rules $RPM_BUILD_ROOT/etc/udev/rules.d/kvm.rules
 %endif
 
 %if %{with kernel}
