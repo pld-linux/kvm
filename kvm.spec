@@ -1,5 +1,5 @@
 # TODO:
-# - consider moving kvm groupadd/remove from -udev and kernel package to main package
+# - consider moving kvm groupadd/remove from -udev and kernel package to main package (why?)
 # - kernel part - doesn't build now, but should we care in the HEAD?
 #   btw. with kernel bcond we require >= 3:2.6.28 kernels which
 #   could have the kvm stuff on its own
@@ -238,25 +238,19 @@ install -p -D kvm/scripts/65-kvm.rules $RPM_BUILD_ROOT/etc/udev/rules.d/kvm.rule
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%pre    -n kernel%{_alt_kernel}-misc-kvm
-%groupadd -g 160 kvm
-
-%post   -n kernel%{_alt_kernel}-misc-kvm
-%depmod %{_kernel_ver}
-
-%postun -n kernel%{_alt_kernel}-misc-kvm
-%depmod %{_kernel_ver}
-if [ "$1" = "0" ]; then
-	%groupremove kvm
-fi
-
-%pre udev
+%pre
 %groupadd -g 160 kvm
 
 %postun
 if [ "$1" = "0" ]; then
 	%groupremove kvm
 fi
+
+%post   -n kernel%{_alt_kernel}-misc-kvm
+%depmod %{_kernel_ver}
+
+%postun -n kernel%{_alt_kernel}-misc-kvm
+%depmod %{_kernel_ver}
 
 %if %{with userspace}
 %files
