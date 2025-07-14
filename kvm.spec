@@ -162,8 +162,8 @@ kvm - moduł jądra Linuksa.
 %prep
 %setup -q -n %{pname}-%{version}
 #patch0 -p1
-%patch1 -p1
-%patch2 -p1
+%patch -P1 -p1
+%patch -P2 -p1
 
 sed -i 's#header-sync-$(if $(WANT_MODULE),n,y)#header-sync-n#g' Makefile
 sed -i 's#^depmod_version=$#depmod_version=%{_kernel_ver}#' configure
